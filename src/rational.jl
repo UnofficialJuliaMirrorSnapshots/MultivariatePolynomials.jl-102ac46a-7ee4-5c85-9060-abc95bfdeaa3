@@ -6,6 +6,9 @@ struct RationalPoly{NT <: APL, DT <: APL}
     den::DT
 end
 
+# This constructor is called from LinearAlgebra in the method Matrix{T}(s::UniformScaling{Bool}, dims)
+RationalPoly{NT,DT}(x::Bool) where {NT,DT} = ifelse(x, one(RationalPoly{NT,DT}), zero(RationalPoly{NT,DT}))
+
 Base.numerator(r::RationalPoly) = r.num
 Base.denominator(r::RationalPoly) = r.den
 
@@ -25,6 +28,7 @@ end
 Base.inv(r::RationalPoly) = r.den / r.num
 Base.inv(p::APL{T}) where T = one(T) / p
 Base.:/(r::RationalPoly, p) = r.num / (r.den * p)
+Base.:/(r::RationalPoly, s::RationalPoly) = (r.num * s.den) / (s.num * r.den)
 function Base.:/(num::NT, den::DT) where {NT <: APL, DT <: APL}
     RationalPoly{NT, DT}(num, den)
 end
@@ -62,7 +66,7 @@ Base.:*(r::RationalPoly, p::APL)          = (r.num * p) / r.den
 Base.:*(α, r::RationalPoly)               = (α * r.num) / r.den
 Base.:*(r::RationalPoly, α)               = (r.num * α) / r.den
 
-Base.zero(::RationalPoly{NT}) where {NT} = zero(NT)
-Base.zero(::Type{RationalPoly{NT, DT}}) where {NT, DT} = zero(NT)
-Base.one(::RationalPoly{NT}) where {NT} = one(NT)
-Base.one(::Type{RationalPoly{NT, DT}}) where {NT, DT} = one(NT)
+Base.zero(r::RationalPoly) = zero(typeof(r))
+Base.zero(::Type{RationalPoly{NT, DT}}) where {NT, DT} = zero(NT) / one(DT)
+Base.one(r::RationalPoly) = one(typeof(r))
+Base.one(::Type{RationalPoly{NT, DT}}) where {NT, DT} = one(NT) / one(DT)

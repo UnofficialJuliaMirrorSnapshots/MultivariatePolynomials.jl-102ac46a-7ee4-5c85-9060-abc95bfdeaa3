@@ -26,4 +26,14 @@
     @test denominator(x / x^2) == x^2
     @test inv(x / x^2) == x
     @test x / x^2 == inv(x)
+    @test isone(((x+1) / (x-1)) / ((x+1) / (x-1)))
+    @test ((x+1)^2 / (x-1)) / ((x+1) / (x-1)) == x+1
+    poly = (x+1)/(x+2.0)
+    RType = typeof(poly)
+    @test RType(true) == one(RType)
+    @test RType(false) == zero(RType)
+    @test one(RType) isa RType
+    @test zero(RType) isa RType
+    @test one(poly) isa RType
+    @test zero(poly) isa RType
 end
